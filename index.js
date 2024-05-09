@@ -14,6 +14,10 @@ app.get("/",(req,res)=>{
 const {connect}=require('./database');
 connect();
 
+const bodyParser=require('body-parser');
+
+app.use(bodyParser.json());
+
 
 const routes=require('./routes')
 app.use('/api',routes);

@@ -7,6 +7,13 @@ exports.getUserData=async(req,res)=>{
         const q1=`SELECT * from employee`
         const data=conn.query(q1,(err,result)=>{
             if(err){res.status(500).send(err)}
+            if(result.length===0)
+            {
+                return res.status(200).json({
+                    success:'true',
+                    message:'No User Present'
+                })
+            }
             res.status(200).json({
                 success:true,
                 message:'All Users fetched successfully',
@@ -93,36 +100,33 @@ exports.getParticularUser=async(req,res)=>{
 }
 
 exports.insertUserData=async(req,res)=>{
-    try{
-        console.log('req.body',req.body);
-        const {e_id,name,Department,Salary,Mobile_no}=req.body;
-        
-        const q1=`insert into employee values(${e_id},${name},${Department},${Salary},${Mobile_no})`
-        const data=conn.query(q1,(err,result)=>{
-            if(err){res.status(500).send(err)}
+    
+        const q1=`insert into employee values(?)`;
+        const response=await conn.query(q1,[req.body],(err,result)=>{
+            if(err){res.status(500).send({
+                success:false,
+                message:"Not fulfilled",
+                error:err
+            })}
             res.status(200).json({
                 success:true,
                 message:'User Created Successfully',
+                data:result
             })
 
         });
         
-    }catch(error){
-        console.log('error',error);
-        res.status(500).json({
-            success:false,
-            message:'internal server error'
-        })
-    }
+        
+   
 }
 
 exports.updateUserData=async(req,res)=>{
     try{
-        console.log('req.body',req.body);
-        const {e_id,name,Department,Salary,Mobile_no}=req.body;
         
-        const q1=`insert into employee values(${e_id},${name},${Department},${Salary},${Mobile_no})`
-        const data=conn.query(q1,(err,result)=>{
+        const id=req.params.id;
+       
+        console.log('q1',q1);
+        const data=conn.query(q1,[req.body],(err,result)=>{
             if(err){res.status(500).send(err)}
             res.status(200).json({
                 success:true,

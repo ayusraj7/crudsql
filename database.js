@@ -5,7 +5,7 @@ exports.connect=()=>{
     try{
 
         const connection=conn;
-        console.log('connenction',conn);
+        
 
         connection.connect((err) => {
             if (err) 
