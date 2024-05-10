@@ -3,14 +3,15 @@ const {executeQuery}=require('../database/QueryWrapper')
 
 
 const AllUserApi=`SELECT* FROM employee`
-const InsertDataApi=`insert into employee values(?)`;
+const InsertDataApi=`insert into employee (name,Department,Salary,Mobile_no) values(?,?,?,?)`;
 exports.getUserData=async(req,res)=>{
     try{
+        
          executeQuery(AllUserApi).then((result)=>{
              res.status(200).json({
                  success:true,
                  message:'All User Fetched Successfully',
-                 data:result.results,
+                 data:result,
              })
          }).catch((err)=>{throw err})
         
@@ -24,18 +25,18 @@ exports.getUserData=async(req,res)=>{
     }
 }
 
+const DeleteUserApi=`delete from employee where e_id=?`
 exports.deleteUserData=async(req,res)=>{
     try{
-        const id=req.params.id;
-        const q1=`delete from employee where e_id=${id}`
-        const data=conn.query(q1,(err,result)=>{
-            if(err){res.status(500).send(err)}
+        
+        
+        executeQuery(DeleteUserApi,[req.params.id]).then((result)=>{
             res.status(200).json({
                 success:true,
-                message:'User Deleted Successfully',
+                message:'All deleted Successfully',
+               
             })
-
-        });
+        }).catch((err)=>{throw err})
         
     }catch(error){
         console.log('error',error);
@@ -95,14 +96,18 @@ exports.getParticularUser=async(req,res)=>{
 exports.insertUserData=async(req,res)=>{
     
         try{
-
-            executeQuery(InsertDataApi,[req.body]).then((result)=>{
+            console.log('adjld',[req.body]);
+            
+            const data=await executeQuery(InsertDataApi,[req.body.name,req.body.Department,req.body.Salary,req.body.Mobile_no])
+            console.log('data',data);
+            if(data)
+            {
                 res.status(200).json({
                     success:true,
                     message:'User Created Successfully',
-                    data:result,
+                    data:data,
                 })
-            }).catch((err)=>{throw err})
+            }
 
         }catch(error){
             console.log('error',error);
@@ -114,20 +119,21 @@ exports.insertUserData=async(req,res)=>{
         }
 }
 
+
 exports.updateUserData=async(req,res)=>{
     try{
         
-        const id=req.params.id;
-        const q1=`select * from employee where id=${req.params.id}`
-        console.log('q1',q1);
-        const data=connection.query(q1,[req.body],(err,result)=>{
-            if(err){res.status(500).send(err)}
-            res.status(200).json({
-                success:true,
-                message:'User Created Successfully',
-            })
-
-        });
+        const updateUserApi=`update employee set name=?,Department=?,Salary=?,Mobile_no=? where e_id=${req.params.id}`
+        const data=await executeQuery(updateUserApi,[req.body.name,req.body.Department,req.body.Salary,req.body.Mobile_no])
+            console.log('data',data);
+            if(data)
+            {
+                res.status(200).json({
+                    success:true,
+                    message:'User Created Successfully',
+                    data:data,
+                })
+            }
         
     }catch(error){
         console.log('error',error);
