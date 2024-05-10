@@ -1,5 +1,6 @@
 const express=require('express');
-const { getUserData, deleteUserData,getParticularUser, insertUserData, DeleteAllUser, updateUserData } = require('./controller');
+const res = require('express/lib/response');
+const { getUserData,executeQuery, deleteUserData,getParticularUser, insertUserData, DeleteAllUser, updateUserData } = require('../controller/controller');
 const router=express.Router();
 
 router.get('/user',getUserData);

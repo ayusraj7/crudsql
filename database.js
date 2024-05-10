@@ -1,12 +1,11 @@
 const mysql=require('mysql');
-const conn=require('./connection')
+const conn=require('./database/connection')
 
 exports.connect=()=>{
     try{
 
         const connection=conn;
         
-
         connection.connect((err) => {
             if (err) 
             {

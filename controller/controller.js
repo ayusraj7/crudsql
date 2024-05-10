@@ -1,26 +1,18 @@
-const conn=require('./connection');
-const mysql=require('mysql');
+const conn=require('../database/connection');
+const {executeQuery}=require('../database/QueryWrapper')
 
+
+const AllUserApi=`SELECT* FROM employee`
 exports.getUserData=async(req,res)=>{
     try{
-       
-        const q1=`SELECT * from employee`
-        const data=conn.query(q1,(err,result)=>{
-            if(err){res.status(500).send(err)}
-            if(result.length===0)
-            {
-                return res.status(200).json({
-                    success:'true',
-                    message:'No User Present'
-                })
-            }
-            res.status(200).json({
-                success:true,
-                message:'All Users fetched successfully',
-                data:result
-            })
-
-        });
+         executeQuery(AllUserApi).then((result)=>{
+             res.status(200).json({
+                 success:true,
+                 message:'All User Fetched Successfully',
+                 data:result,
+             })
+         }).catch((err)=>{throw err})
+        
         
     }catch(error){
         console.log('error',error);
@@ -79,7 +71,7 @@ exports.DeleteAllUser=async(req,res)=>{
 exports.getParticularUser=async(req,res)=>{
     try{
         const id=req.params.id;
-        const q1=`select * from employee where e_id=${id}`
+        const q1=`select * from employee where e_id=?`
         const data=conn.query(q1,(err,result)=>{
             if(err){res.status(500).send(err)}
             res.status(200).json({
@@ -124,9 +116,9 @@ exports.updateUserData=async(req,res)=>{
     try{
         
         const id=req.params.id;
-       
+        const q1=`select * from employee where id=${req.params.id}`
         console.log('q1',q1);
-        const data=conn.query(q1,[req.body],(err,result)=>{
+        const data=connection.query(q1,[req.body],(err,result)=>{
             if(err){res.status(500).send(err)}
             res.status(200).json({
                 success:true,
@@ -143,3 +135,7 @@ exports.updateUserData=async(req,res)=>{
         })
     }
 }
+
+
+
+
