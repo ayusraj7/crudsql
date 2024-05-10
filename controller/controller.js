@@ -3,13 +3,14 @@ const {executeQuery}=require('../database/QueryWrapper')
 
 
 const AllUserApi=`SELECT* FROM employee`
+const InsertDataApi=`insert into employee values(?)`;
 exports.getUserData=async(req,res)=>{
     try{
          executeQuery(AllUserApi).then((result)=>{
              res.status(200).json({
                  success:true,
                  message:'All User Fetched Successfully',
-                 data:result,
+                 data:result.results,
              })
          }).catch((err)=>{throw err})
         
@@ -93,23 +94,24 @@ exports.getParticularUser=async(req,res)=>{
 
 exports.insertUserData=async(req,res)=>{
     
-        const q1=`insert into employee values(?)`;
-        const response=await conn.query(q1,[req.body],(err,result)=>{
-            if(err){res.status(500).send({
-                success:false,
-                message:"Not fulfilled",
-                error:err
-            })}
-            res.status(200).json({
-                success:true,
-                message:'User Created Successfully',
-                data:result
-            })
+        try{
 
-        });
-        
-        
-   
+            executeQuery(InsertDataApi,[req.body]).then((result)=>{
+                res.status(200).json({
+                    success:true,
+                    message:'User Created Successfully',
+                    data:result,
+                })
+            }).catch((err)=>{throw err})
+
+        }catch(error){
+            console.log('error',error);
+            res.status(500).json({
+                success:false,
+                message:'internal server error',
+                error:error
+            })
+        }
 }
 
 exports.updateUserData=async(req,res)=>{
